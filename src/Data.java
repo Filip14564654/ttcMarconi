@@ -1,59 +1,42 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Data {
 
-    public void chooseSource() throws IOException {
-        System.out.println("Zadejte celé kladné číslo, pokud chcete načítat data z konzlole, " +
-                "nebo cestu k souboru s čísly");
+    public void parseInput() throws IOException {
         Scanner scanner = new Scanner(System.in);
-        String source = scanner.nextLine();
-        try{
-            //CONSOLE
-            Integer.parseInt(source);
-            System.out.println("Pokud chcete, zadejte adresu, kam bude výsledek uložen. " +
-                    "Pokud chcete výsledek zapsat do konzole, zadejte čísla oddělená mezerou.");
-            String s1 = scanner.nextLine();
-            s1 = s1.trim();
-            if (s1.contains(" ")){
-                //CONSOLE -> CONSOLE
-                System.out.println(parseData(s1));
-            }else {
-                //CONSOLE -> FILE
-                System.out.println("Zadejte čísla oddělená mezerou.");
-                String s2 = scanner.nextLine();
-                PrintWriter printWriter = new PrintWriter(s1);
-                printWriter.println(parseData(s2));
-                printWriter.close();
-            }
+        String s = scanner.nextLine();
+        String[] strings = s.split(" ");
+        String data;
 
-        }
-        catch (NumberFormatException nfe){
-            //FILE
-            System.out.println("Pokud si přejete výsledek zapsat do souboru, napište adresu. " +
-                    "Pokud chcete zapsat výsledek do konzole, stiskněte enter.");
-            String output = scanner.nextLine();
-            FileReader fileReader = new FileReader(source);
+        if (strings[0].contains(".")){
+            FileReader fileReader = new FileReader(strings[0]);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-            if(output.isEmpty()){
-                // FILE -> CONSOLE
-                System.out.println(parseData(bufferedReader.readLine()));
-
-            }else {
-                // FILE -> FILE
-                PrintWriter printWriter = new PrintWriter(output);
-                printWriter.println(parseData(bufferedReader.readLine()));
-                printWriter.close();
-
+            data = bufferedReader.readLine();
+        }else {
+            try{
+                Integer.parseInt(strings[0]);
+                System.out.println("Zadejte čísla oddělená mezerou.");
+                data = scanner.nextLine();
+            }catch (NumberFormatException nfe){
+                System.out.println("Nezadali jste validní input.");
+                parseInput();
+                return;
             }
+            scanner.close();
+        }
+
+        if (strings.length == 1){
+            // OUTPUT IS CONSOLE
+            System.out.println(parseData(data));
+        }else {
+            // OUTPUT IS FILE
+            PrintWriter printWriter = new PrintWriter(strings[1]);
+            printWriter.println(parseData(data));
+            printWriter.close();
         }
     }
-
 
     public String parseData(String string){
         String[] strings = string.split(" ");

@@ -4,7 +4,7 @@ public class Main {
     public static void main(String[] args) {
         Data data = new Data();
         try {
-            data.chooseSource();
+            data.parseInput();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
